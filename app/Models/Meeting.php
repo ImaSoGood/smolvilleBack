@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Meeting extends Model
 {
     protected $table = 'meet_meetings';
+    protected $hidden = ['id'];
 
     protected $fillable = [
         'meet_token',
