@@ -26,7 +26,7 @@ class EventController extends Controller
         return json_encode($event);
     }
 
-    public function ReturnAttendeesCount($event_id)
+    public function getAttendeesCount($event_id)
     {
         $count = EventVisit::where('event_id', $event_id)->count();
         return ['count' => $count];
@@ -42,8 +42,11 @@ class EventController extends Controller
         return ['is_attending' => $result > 0];
     }
 
-    public function unattendEvent($event_id, $user_id)
+    public function unattendEvent(Request $request)
     {
+        $event_id = $request->input('event_id');
+        $user_id = $request->input('user_id');
+
         $unattend = EventVisit::where([
                         'event_id' => $event_id, 
                         'user_id' => $user_id])
@@ -55,8 +58,11 @@ class EventController extends Controller
                     'error' => 'Не оказалось записей об участии..'];
     }
 
-    public function attendEvent($event_id, $user_id)
+    public function attendEvent(Request $request)
     {
+        $event_id = $request->input('event_id');
+        $user_id = $request->input('user_id');
+
         $exists = EventVisit::where([
                     'event_id' => $event_id,
                     'user_id' => $user_id])
@@ -69,6 +75,7 @@ class EventController extends Controller
         $eventVisit->event_id = $event_id;
         $eventVisit->user_id = $user_id;
         $eventVisit->save();
+
         return true;
     }
 

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdController;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\ImageController;
@@ -15,9 +16,15 @@ Route::get('/user', function (Request $request) {
 Route::post('/v1/upload-image', [ImageController::class, 'uploadImage']);
 
 Route::get('/v1/events', [EventController::class, 'ReturnEvents']);
-Route::get('/v1/eventVisit/{event_id}', [EventController::class, 'ReturnAttendeesCount']);
+Route::get('/v1/event/visitCount/{event_id}', [EventController::class, 'getAttendeesCount']);
 Route::get('/v1/event/{event_id}', [EventController::class, 'ReturnEvent']);
+Route::get('/v1/event/check/{event_id}/{user_id}', [EventController::class, 'checkUserAttendance']);
+Route::post('/v1/event/attend', [EventController::class, 'attendEvent']);
+Route::post('/v1/event/unattend', [EventController::class, 'unattendEvent']);
 
+Route::get('/v1/ads', [AdController::class, 'ReturnAds']);
+
+Route::post('/v1/meeting/create', [MeetController::class, 'CreateMeeting']);
 Route::get('/v1/meetings',[MeetController::class, 'ReturnMeetings']);
 
 Route::get('/STATUS', [ServerStatusController::class, 'ServerStatus']);
