@@ -11,6 +11,6 @@ class ServerStatusController extends Controller
     public function ServerStatus()
     {
         $status = ServerStatus::orderBy('id', 'DESC')->first();
-        return json_encode($status);
+        return response()->json($status);
     }
 }

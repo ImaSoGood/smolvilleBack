@@ -44,7 +44,7 @@ class MeetController extends Controller
                                 ->orderBy('date', 'DESC')
                                 ->get();
 
-        return json_encode($meetings);
+        return response()->json($meetings);
     }
 
     public function ReturnMeeting($token)
@@ -57,7 +57,7 @@ class MeetController extends Controller
                                 ->orderBy('date', 'DESC')
                                 ->first();
 
-        return json_encode($meeting);
+        return response()->json($meeting);
     }
 
     public function JoinMeeting($meeting_token, $user_id)

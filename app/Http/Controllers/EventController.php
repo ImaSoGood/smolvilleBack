@@ -9,11 +9,11 @@ use App\Models\EventVisit;
 
 class EventController extends Controller
 {
-    public function ReturnEvents()
+    public function ReturnEvents(Request $request)
     {
         $events = Event::withCount('visits as attendees_count')
                         ->orderBy('date', 'ASC')
-                        ->get();
+                        ->get(); 
         
         return $events;
     }
@@ -23,7 +23,7 @@ class EventController extends Controller
         $event = Event::where('id', $event_id)
                         ->first();
 
-        return json_encode($event);
+        return response()->json($event);
     }
 
     public function getAttendeesCount($event_id)

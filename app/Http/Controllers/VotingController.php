@@ -17,7 +17,7 @@ class VotingController extends Controller
                             ->orderBy('created_at', 'DESC')
                             ->get();
         
-        return json_encode($votings);
+        return response()->json($votings);
     }
 
     public function ReturnVoteParams($voting_id)
@@ -25,7 +25,7 @@ class VotingController extends Controller
         $params = VoteParam::where('voting_id', $voting_id)
                                 ->get();
 
-        return json_encode($params);
+        return response()->json($params);
     }
 
     public function SubmitVote()
