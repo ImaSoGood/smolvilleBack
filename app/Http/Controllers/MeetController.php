@@ -23,17 +23,17 @@ class MeetController extends Controller
         $meeting->date = $request->input('date');
         $meeting->type = $request->input('type');
         $meeting->age_limit = $request->input('age_limit');
-        $meeting->location = $request->input('location');
-        $meeting->map_link = $request->input('map_link');
+        $meeting->location = $request->input('location') || '';
+        $meeting->map_link = $request->input('map_link') || '';
         $meeting->image_url = ''; 
         $meeting->save();
 
         if($meeting->id)
         {
             $ImageController = new ImageController();
-            $response[] = $ImageController->uploadImage($request->file('image'), 'meet', $meeting->id);
+            $response[] = $ImageController->uploadImage($request->file('file'), 'meet', $meeting->id);
         }
-        return true;
+        return ['success' => true];
     }
     public function ReturnMeetings()
     {
