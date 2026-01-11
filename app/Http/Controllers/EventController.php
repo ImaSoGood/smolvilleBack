@@ -69,15 +69,13 @@ class EventController extends Controller
                     ->exists();
 
         if($exists)
-            return false;
+            return ['success' => false];
 
         $eventVisit = new EventVisit();
         $eventVisit->event_id = $event_id;
         $eventVisit->user_id = $user_id;
         $eventVisit->save();
 
-        return true;
+        return ['success' => true];
     }
-
-    
 }

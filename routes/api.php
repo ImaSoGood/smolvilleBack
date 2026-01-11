@@ -9,10 +9,6 @@ use App\Http\Controllers\ServerStatusController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
-
 Route::post('/v1/upload-image', [ImageController::class, 'uploadImage']);
 
 Route::get('/v1/events', [EventController::class, 'ReturnEvents']);
@@ -26,6 +22,10 @@ Route::get('/v1/ads', [AdController::class, 'ReturnAds']);
 
 Route::post('/v1/meeting/create', [MeetController::class, 'CreateMeeting']);
 Route::get('/v1/meetings',[MeetController::class, 'ReturnMeetings']);
+Route::post('/v1/meeting/attend', [MeetController::class, 'AttendMeeting']);//NEW
+Route::post('/v1/meeting/unattend', [MeetController::class, 'UnattendMeeting']);//NEW
+Route::get('v1/meeting/checkAttendance', [MeetController::class, 'CheckMeetingAttendance']);//NEW
+Route::post('v1/meeting/watchMeet', [MeetController::class, 'AddMeetView']);//NEW
 
 Route::get('/STATUS', [ServerStatusController::class, 'ServerStatus']);
 

@@ -23,7 +23,7 @@ class VotingController extends Controller
     public function ReturnVoteParams($voting_id)
     {
         $params = VoteParam::where('voting_id', $voting_id)
-                                ->get();
+                        ->get();
 
         return response()->json($params);
     }
@@ -36,7 +36,7 @@ class VotingController extends Controller
     public function getVoteCount($voting_id)
     {
         $voteCount = VoteUser::where('voting_id', $voting_id)
-                                ->count();
+                        ->count();
         
         return ['vote_count' => $voteCount];
     }
