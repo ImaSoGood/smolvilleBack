@@ -77,9 +77,16 @@ class MeetController extends Controller
 
     public function AttendMeeting(Request $request)
     {
-        $meeting_token = $request->input('meeting_id');
-        $ActualMeeting = Meeting::where('meet_token', $meeting_token)->first();
+        $meeting_token = $request->input('meet_token');
         $user_id = $request->input('user_id');
+        $ActualMeeting = Meeting::where('meet_token', $meeting_token)->first();
+
+        $exists = MeetVisit::where([
+                                'meeting_token' => $meeting_token,
+                                'user_id' => $user_id])
+                                ->exists();
+        if($exists)
+            return ['success' => false, 'message' => 'Уже записаны на встречу'];
 
         $join = new MeetVisit();
         $join->meeting_token = $meeting_token;
