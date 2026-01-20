@@ -15,6 +15,7 @@ class MeetUserCreator extends Model
         't_id',
         'token_id',
         'rule_token',
+        'username'
     ];
 
     // Связь с правилом
@@ -26,6 +27,6 @@ class MeetUserCreator extends Model
     // Связь со встречами, созданными этим пользователем
     public function meetings()
     {
-        return $this->hasMany(Meeting::class, 'user_token_id', 'token_id');
+        return $this->hasMany(Meeting::class, 'token_id', 'token_id');
     }
 }

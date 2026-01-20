@@ -4,9 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\Meeting;
+use App\Models\MeetUserCreator;
 use App\Models\MeetView;
 use App\Models\MeetVisit;
-use Brick\Math\BigInteger;
 use Illuminate\Http\Request;
 
 class MeetController extends Controller
@@ -14,6 +14,8 @@ class MeetController extends Controller
     public function CreateMeeting(Request $request)
     {
         $UserTokenId = hash('sha256', $request->input('user_id'));
+        $username = $request->input('username');
+
         if($this->checkMeetingsLimit($UserTokenId))
             return ['success' => false,
                     'message' => 'Возможно создать встречу только раз в 12 часов :)'];
@@ -46,6 +48,7 @@ class MeetController extends Controller
         {
             $ImageController = new ImageController();
             $ImageController->uploadImage($request->file('file'), 'meet', $meeting->id);
+            $this->createMeetCreator($request->input('user_id'), $MeetToken, $username);
         }
 
         return ['success' => true];
@@ -55,7 +58,7 @@ class MeetController extends Controller
     {
         $meetings = Meeting::withCount(['visits as attendees_count'])
                         ->withCount(['views as view_count'])
-                        ->with('creator')
+                        //->with('creator')
                         ->where('status', 1)
                         ->orderBy('date', 'DESC')
                         ->get();
@@ -67,7 +70,7 @@ class MeetController extends Controller
     {
         $meeting = Meeting::withCount(['visits as visit_count'])
                         ->withCount(['views as view_count'])
-                        ->with('creator')
+                        //->with('creator')
                         ->where('status', 1)
                         ->where('token', $token)
                         ->orderBy('date', 'DESC')
@@ -108,7 +111,7 @@ class MeetController extends Controller
     {
         $meet_token = $request->input('meet_token');;
         $user_id = $request->input('user_id');
-        
+
         if($this->CheckDateOnMeeting($meet_token))
             return ['success' => false, 'message' => 'Она прошла. Зачем???'];
 
@@ -145,6 +148,25 @@ class MeetController extends Controller
         $MeetView->user_id = $userId;
         $MeetView->watch_time = now();
         $MeetView->save();
+    }
+
+    public function GetUsernameByMeet($meet_token)
+    {
+        $Meeting = Meeting::with('creator')
+                                ->where('meet_token', $meet_token)
+                                ->first();
+
+        return ['username' => $Meeting->creator->username];
+    }
+
+    private function createMeetCreator($user_id, $meet_token, $username)
+    {
+        $meetCreator = new MeetUserCreator();
+        $meetCreator->t_id = $user_id;
+        $meetCreator->token_id = $meet_token;
+        $meetCreator->rule_token = 'none';
+        $meetCreator->username = $username;
+        $meetCreator->save();
     }
 
     private function checkMeetingsLimit($UserTokenId)

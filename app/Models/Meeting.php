@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Meeting extends Model
 {
     protected $table = 'meet_meetings';
-    protected $hidden = ['id'];
+    protected $hidden = ['id', 'user_token_id'];
 
     protected $fillable = [
         'meet_token',
@@ -43,6 +43,6 @@ class Meeting extends Model
     // Связь с создателем встречи
     public function creator()
     {
-        return $this->hasOne(MeetUsersCreator::class, 'token_id', 'user_token_id');
+        return $this->belongsTo(MeetUserCreator::class, 'meet_token', 'token_id');
     }
 }

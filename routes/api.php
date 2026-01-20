@@ -26,6 +26,7 @@ Route::post('/v1/meeting/attend', [MeetController::class, 'AttendMeeting']);//NE
 Route::post('/v1/meeting/unattend', [MeetController::class, 'UnattendMeeting']);//NEW
 Route::get('v1/meeting/checkAttendance', [MeetController::class, 'CheckMeetingAttendance']);//NEW
 Route::post('v1/meeting/watchMeet', [MeetController::class, 'AddMeetView']);//NEW
+Route::get('v1/meeting/profile/{meet_token}', [MeetController::class, 'GetUsernameByMeet']);
 
 Route::get('/STATUS', [ServerStatusController::class, 'ServerStatus']);
 
