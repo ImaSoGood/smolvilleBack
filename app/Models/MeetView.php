@@ -21,6 +21,8 @@ class MeetView extends Model
         'watch_time' => 'datetime',
     ];
 
+    public $timestamps = false;
+
     // Связь с встречей
     public function meeting()
     {

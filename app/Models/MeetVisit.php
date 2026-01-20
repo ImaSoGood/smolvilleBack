@@ -12,7 +12,7 @@ class MeetVisit extends Model
     protected $table = 'meet_visit';
 
     protected $fillable = [
-        'meeting_token',
+        'meet_token',
         'meeting_id',
         'user_id',
     ];

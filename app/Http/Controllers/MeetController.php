@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Meeting;
 use App\Models\MeetView;
 use App\Models\MeetVisit;
+use Brick\Math\BigInteger;
 use Illuminate\Http\Request;
 
 class MeetController extends Controller
@@ -77,19 +78,22 @@ class MeetController extends Controller
 
     public function AttendMeeting(Request $request)
     {
-        $meeting_token = $request->input('meet_token');
+        $meet_token = $request->input('meet_token');
         $user_id = $request->input('user_id');
-        $ActualMeeting = Meeting::where('meet_token', $meeting_token)->first();
+
+        $ActualMeeting = Meeting::where('meet_token', $meet_token)->first();
+        if($ActualMeeting->date < now())
+            return ['success' => false, 'message' => 'Она прошла. Зачем???'];
 
         $exists = MeetVisit::where([
-                                'meeting_token' => $meeting_token,
+                                'meet_token' => $meet_token,
                                 'user_id' => $user_id])
                                 ->exists();
         if($exists)
             return ['success' => false, 'message' => 'Уже записаны на встречу'];
 
         $join = new MeetVisit();
-        $join->meeting_token = $meeting_token;
+        $join->meet_token = $meet_token;
         $join->meeting_id = $ActualMeeting->id;
         $join->user_id = $user_id;
         $join->save();
@@ -102,19 +106,23 @@ class MeetController extends Controller
 
     public function UnattendMeeting(Request $request)
     {
-        $meeting_token = $request->input('meeting_id');
+        $meet_token = $request->input('meet_token');;
         $user_id = $request->input('user_id');
-
-        $leave = MeetVisit::where([
-                            'meetig_token' => $meeting_token,
-                            'user_id' => $user_id])
-                            ->delete();
         
+        if($this->CheckDateOnMeeting($meet_token))
+            return ['success' => false, 'message' => 'Она прошла. Зачем???'];
+
+        $deleted = MeetVisit::where('meet_token', $meet_token)
+                                ->where('user_id', $user_id)
+                                ->delete();
+
         return ['success' => true];
     }   
 
     public function CheckMeetingAttendance(Request $request)
     {
+        $this->AddMeetView($request);
+
         $meetToken = $request->input('meet_token');
         $userId = $request->input('user_id');
 
@@ -122,7 +130,7 @@ class MeetController extends Controller
                         'meet_token' => $meetToken,
                         'user_id' => $userId])
                         ->exists();
-        return $existance;
+        return ['is_attending' => $existance];
     }
 
     public function AddMeetView(Request $request)

@@ -47,6 +47,9 @@ class EventController extends Controller
         $event_id = $request->input('event_id');
         $user_id = $request->input('user_id');
 
+        if($this->CheckDateOnEvent($event_id))
+            return ['success' => false, 'message' => 'Она прошла. Зачем???'];
+
         $unattend = EventVisit::where([
                         'event_id' => $event_id, 
                         'user_id' => $user_id])
@@ -63,11 +66,13 @@ class EventController extends Controller
         $event_id = $request->input('event_id');
         $user_id = $request->input('user_id');
 
+        if($this->CheckDateOnEvent($event_id))
+            return ['success' => false, 'message' => 'Она прошла. Зачем???'];
+
         $exists = EventVisit::where([
                     'event_id' => $event_id,
                     'user_id' => $user_id])
                     ->exists();
-
         if($exists)
             return ['success' => false];
 

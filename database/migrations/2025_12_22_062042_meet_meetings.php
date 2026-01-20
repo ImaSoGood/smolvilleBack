@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('type', 64);
             $table->integer('age_limit');
             $table->string('location', 256);
-            $table->string('map_link', 512);
+            $table->string('map_link', 512)->default('https://2gis.ru/yuzhnosakhalinsk?m=142.728032%2C46.957628%2F11');
             $table->tinyInteger('status')->default(1);
             $table->timestamps();
         });

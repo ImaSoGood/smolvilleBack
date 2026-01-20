@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('meet_visit', function (Blueprint $table) {
             $table->id();
-            $table->string('meeting_token', 128);
+            $table->string('meet_token', 128);
             $table->foreignId('meeting_id')->constrained('meet_meetings')->onDelete('cascade');
             $table->bigInteger('user_id');
             $table->timestamps();
