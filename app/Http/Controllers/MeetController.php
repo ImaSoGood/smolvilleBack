@@ -8,6 +8,8 @@ use App\Models\MeetUserCreator;
 use App\Models\MeetView;
 use App\Models\MeetVisit;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 
 class MeetController extends Controller
 {
@@ -30,6 +32,10 @@ class MeetController extends Controller
             'location' => 'nullable|string|max:256',
             'map_link' => 'nullable|string|max:512|url',
         ]);
+
+        if(!$this->validateMeetingDate($validated['date']))
+            return ['success' => false,
+                    'message' => 'Нельзя указывать дату, более чем за 2 недели от текущей даты, и менее 2-х часов до встречи'];
 
         $meeting = new Meeting();
         $meeting->meet_token = $MeetToken;
@@ -177,5 +183,41 @@ class MeetController extends Controller
                             ->where('created_at', '>=', now()->subHours($limitCount))
                             ->exists();
         return $userMeeting;
+    }
+
+    private function validateMeetingDate($date, $allowPast = false)
+    {
+        $date = Carbon::parse($date);
+        $now = Carbon::now();
+
+        Log::info('Validation check - Now: ' . $now->toDateTimeString() .
+            ' | Input date: ' . $date->toDateTimeString());
+
+        // 1. Дата должна быть в будущем
+        if (!$allowPast && $date <= $now) {
+            Log::info('Failed: Date is not in the future');
+            return false;
+        }
+
+        // 2. Минимум 2 часа от текущего времени
+        $minAllowedDate = $now->copy()->addHours(2);
+
+        if ($date < $minAllowedDate) {
+            Log::info('Failed: Date is less than 2 hours from now');
+            Log::info('Min allowed date: ' . $minAllowedDate->toDateTimeString());
+            return false;
+        }
+
+        // 3. Максимум 2 недели от текущего времени
+        $maxAllowedDate = $now->copy()->addWeeks(2);
+
+        if ($date > $maxAllowedDate) {
+            Log::info('Failed: Date is more than 2 weeks from now');
+            Log::info('Max allowed date: ' . $maxAllowedDate->toDateTimeString());
+            return false;
+        }
+
+        Log::info('Date validation passed');
+        return true;
     }
 }
